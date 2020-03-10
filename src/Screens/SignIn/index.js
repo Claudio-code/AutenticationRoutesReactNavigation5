@@ -5,13 +5,21 @@ import {
   StyleSheet,
   Button
 } from 'react-native';
+import { AuthContext } from '../../Context';
 
 export default ({ navigation }) => {
+
+  const { signIn } = React.useContext(AuthContext);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>SignIn</Text>
       <Button 
-        title="SignIn"
+        title="Sign In"
+        onPress={() => signIn()}
+      />
+      <Button 
+        title="Create Account"
         onPress={() => navigation.push('CreateAccount')}
       />
     </View>

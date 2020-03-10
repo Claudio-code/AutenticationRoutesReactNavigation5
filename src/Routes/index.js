@@ -8,28 +8,60 @@ import HomeStack from './HomeStack.routes';
 import ProfileStack from './ProfileStack.routes';
 import SearchStack from './SearchStack.routes';
 
+import CreateAccount from '../Screens/CreateAccount';
 import Splash from '../Screens/Splash';
 import SignIn from '../Screens/SignIn';
-import CreateAccount from '../Screens/CreateAccount';
 
+import { AuthContext } from '../Context';
 
 const AuthStack = createStackNavigator();
-const Drawers = createDrawerNavigator();
-const BottomTabs = createBottomTabNavigator();
+const AuthScreens = () => {
+  return(
+    <AuthStack.Navigator>
+      <AuthStack.Screen name="SignIn" component={SignIn} />
+      <AuthStack.Screen name="CreateAccount" component={CreateAccount} />
+    </AuthStack.Navigator>    
+  );
+};
 
+const RootStack = createStackNavigator();
+const RootStackScreen = ({ userToken }) => {
+  
+  return(
+    <RootStack.Navigator headerMode="none">
+      {userToken ? (
+        <RootStack.Screen name="App" component={DrawerStack} />
+      ) : (
+        <RootStack.Screen name="Auth" component={AuthScreens} />
+      )}
+    </RootStack.Navigator>
+  );
+};
+
+
+const BottomTabs = createBottomTabNavigator();
 const Tabs = () => (
-    <BottomTabs.Navigator>
+  <BottomTabs.Navigator>
       <BottomTabs.Screen
         name="Home"
         component={HomeStack}
-      />
+        />
       <BottomTabs.Screen
         name="Search"
         component={SearchStack}
-      />
+        />
     </BottomTabs.Navigator>
 );
 
+const Drawers = createDrawerNavigator();
+const DrawerStack = () => {
+  return(
+    <Drawers.Navigator initialRouteName="Profile">
+      <Drawers.Screen  name="Home" component={Tabs} />
+      <Drawers.Screen  name="Profile" component={ProfileStack} />
+    </Drawers.Navigator>
+  );
+}
 
 export default () => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -64,19 +96,10 @@ export default () => {
 
 
   return (
-    <NavigationContainer >
-      {userToken ? (
-        <Drawers.Navigator>
-          <Drawers.Screen  name="Home" component={HomeStack} />
-          <Drawers.Screen  name="Profile" component={ProfileStack} />
-        </Drawers.Navigator>
-
-      ) : (
-        <AuthStack.Navigator>
-          <AuthStack.Screen name="SignIn" component={SignIn} />
-          <AuthStack.Screen name="CreateAccount" component={CreateAccount} />
-        </AuthStack.Navigator>    
-      )}
-    </NavigationContainer>
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer >
+        <RootStackScreen userToken={userToken} />
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 };

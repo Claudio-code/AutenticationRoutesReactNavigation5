@@ -12,7 +12,7 @@ export default ({ navigation }) => {
       <Text style={styles.title}>Search</Text>
       <Button 
         title="Search2"
-        onPress={() => navigation.push('Search2')}
+        onPress={() => navigation.navigate('Search2')}
       />
     </View>
   );
